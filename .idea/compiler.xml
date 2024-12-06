@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="1.6">
+      <module name="KettuUtils.main" target="1.8" />
+      <module name="Terr_Applied.main" target="1.8" />
+      <module name="Terr_Items.main" target="1.8" />
+      <module name="testmod.main" target="1.8" />
+      <module name="testmod_—_копия.main" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
