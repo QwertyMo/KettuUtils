@@ -38,7 +38,8 @@ public class ChatComponent {
     private final static int backgroundAlpha = 96;
 
     private final static int inputWidth = 350;
-
+    private final static int avatarSize = 16;
+    private final static int avatarBorer = 1;
 
     private final static int messageTTL = 5000;
     private final static int messageFade = 3000;
@@ -84,15 +85,27 @@ public class ChatComponent {
                 chatWidth, TextRender.getTextHeight(text, chatWidth),
                 new Color(0, 0, 0, (int) (backgroundAlpha * (fade)))
         );
-        return TextRender.drawTransferableText(
-                chatPosX + padding, chatPosY + yPos, chatWidth, text,
+        TextRender.drawTransferableText(
+                chatPosX + padding + avatarSize, chatPosY + yPos, chatWidth, text,
                 new Color(255, 255, 255, (int) (textAlpha * (fade)))
         );
+        UIRender.drawSquare(
+                chatPosX - avatarBorer,
+                chatPosY + yPos - avatarBorer,
+                avatarSize + avatarBorer * 2,
+                avatarSize + avatarBorer * 2,
+                Color.GREEN);
+
+        URLImageRender.drawPlayerFace(
+                "QwertyMo",
+                chatPosX,
+                chatPosY + yPos,
+                avatarSize, avatarSize);
+        return TextRender.getTextHeight(text, chatWidth);
     }
 
 
     public static void drawInputField(String text){
-        URLImageRender.drawTexture("https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSFiikUYe74fFYcLe97YqY3VPsuW9SKeoB-7qQKVcH1Goahcook6zhmQemLDOkjTvq2WL1j5gaCmFZqbCjbAi4x9w", 10,10);
         Minecraft mc = Minecraft.getMinecraft();
         UIRender.drawSquare(
                 10, 10,
