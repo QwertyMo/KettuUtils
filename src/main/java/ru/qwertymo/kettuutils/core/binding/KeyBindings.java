@@ -12,7 +12,7 @@ public class KeyBindings {
     public static List<KeyBinding> keyBindings = new ArrayList<>();
 
     public static KeyBinding CHAT_KEY = new KeyBinding("kettu.key.chat.open", Keyboard.KEY_T, "kettu.key.category.chat");
-    public static KeyBinding COMMAND_KEY = new KeyBinding("kettu.key.chat.open", Keyboard.KEY_T, "kettu.key.category.chat");
+    public static KeyBinding COMMAND_KEY = new KeyBinding("kettu.key.chat.command", Keyboard.KEY_SLASH, "kettu.key.category.chat");
 
     public KeyBindings(){
         //Добавление биндов

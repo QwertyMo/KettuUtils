@@ -1,5 +1,5 @@
 buildscript {
-	repositories {
+    repositories {
         flatDir {
             dirs 'libs'
         }
@@ -12,7 +12,7 @@ buildscript {
 	dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:[1.2-1.4.6-SNAPSHOT,)'
         classpath fileTree(dir: 'libs', include: ['*.jar'])
-	}
+    }
 }
 
 tasks.withType(JavaCompile) {

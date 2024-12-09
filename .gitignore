@@ -1,0 +1,7 @@
+/build/
+/eclipse/crash-reports/
+/.gradle/
+/.idea/
+/eclipse/logs/
+/eclipse/saves/
+/eclipse/usernamecache.json
