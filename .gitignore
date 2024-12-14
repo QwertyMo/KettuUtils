@@ -5,3 +5,9 @@
 /eclipse/logs/
 /eclipse/saves/
 /eclipse/usernamecache.json
+/eclipse/world/
+/eclipse/ops.json
+/eclipse/banned-ips.json
+/eclipse/banned-players.json
+/eclipse/whitelist.json
+/eclipse/servers.dat
