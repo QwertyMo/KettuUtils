@@ -1,8 +1,11 @@
 package ru.qwertymo.kettuutils.proxy;
 
 import cpw.mods.fml.common.event.*;
+import ru.qwertymo.kettuutils.core.chat.KettuChatServer;
 
-public class CommonProxy {
+public class KettuUtilsCommonProxy {
+    public final KettuChatServer chat = new KettuChatServer();
+
     public void preInit(FMLPreInitializationEvent event) {
         // Общая логика
     }

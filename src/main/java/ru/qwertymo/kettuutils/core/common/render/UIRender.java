@@ -3,20 +3,19 @@ package ru.qwertymo.kettuutils.core.common.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import ru.qwertymo.kettuutils.core.common.util.PosUtil;
 
 import java.awt.*;
 
 
 public class UIRender {
     public static void drawSquare(int x, int y, int width, int height, Color color){
-        Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution sr = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-
+        y = PosUtil.invertY(y);
         Gui.drawRect(
                 (x),
-                (sr.getScaledHeight() - y),
+                (y),
                 (x + width),
-                (sr.getScaledHeight() - y - height),
+                (y - height),
                 TextRender.getIntFromColor(color));
     }
 }

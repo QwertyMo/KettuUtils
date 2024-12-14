@@ -2,22 +2,20 @@ package ru.qwertymo.kettuutils.core.chat;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraftforge.common.MinecraftForge;
-import ru.qwertymo.kettuutils.core.chat.listener.KettuChatListener;
-import ru.qwertymo.kettuutils.core.chat.listener.KettuRenderListener;
-import ru.qwertymo.kettuutils.core.chat.listener.VanillaChatListener;
+import ru.qwertymo.kettuutils.core.chat.listener.client.KettuChatListener;
+import ru.qwertymo.kettuutils.core.chat.listener.client.KettuRenderListener;
+import ru.qwertymo.kettuutils.core.chat.listener.client.VanillaChatListener;
 import ru.qwertymo.kettuutils.core.chat.view.ChatWidget;
 import ru.qwertymo.kettuutils.core.model.VanillaChatMessage;
 
 import java.util.ArrayList;
 
-public class KettuChat {
+public class KettuChatClient {
     private ArrayList<VanillaChatMessage> _messages = new ArrayList<>();
     private ChatWidget _chatView = new ChatWidget();
     private boolean _isChatOpened = false;
 
-    public KettuChat(){
-        addMessage(new VanillaChatMessage("Пезда хуй член"));
-
+    public KettuChatClient(){
         MinecraftForge.EVENT_BUS.register(new VanillaChatListener());
         FMLCommonHandler.instance().bus().register(new KettuChatListener());
         MinecraftForge.EVENT_BUS.register(new KettuRenderListener());

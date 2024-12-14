@@ -1,41 +1,28 @@
-package ru.qwertymo.kettuutils.core.chat.view;
+package ru.qwertymo.kettuutils.core.chat.component;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
-import org.lwjgl.opengl.GL11;
-import ru.qwertymo.kettuutils.KettuUtils;
 import ru.qwertymo.kettuutils.core.common.render.TextRender;
 import ru.qwertymo.kettuutils.core.common.render.UIRender;
 import ru.qwertymo.kettuutils.core.common.render.URLImageRender;
 import ru.qwertymo.kettuutils.core.model.VanillaChatMessage;
-import net.minecraft.util.ResourceLocation;
-import ru.qwertymo.kettuutils.reference.Reference;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import net.minecraft.client.gui.Gui;
 
 import static java.lang.Math.abs;
 
 public class ChatComponent {
 
-    private final static int maxHeight = 600;
     private final static int chatWidth = 300;
     private final static int chatPosX = 10;
     private final static int chatPosY = 40;
     private final static int padding = 2;
+
     private final static int textAlpha = 255;
     private final static int backgroundAlpha = 96;
+    private final static int borderAlpha = 192;
 
     private final static int inputWidth = 350;
     private final static int avatarSize = 16;
@@ -43,6 +30,8 @@ public class ChatComponent {
 
     private final static int messageTTL = 5000;
     private final static int messageFade = 3000;
+
+    private final static int maxChatBlockHeight = avatarSize + (avatarBorer * 2) + (padding * 2);
 
     private static String combineString(VanillaChatMessage message){
         StringBuilder text = new StringBuilder();
@@ -55,55 +44,41 @@ public class ChatComponent {
         return text.toString();
     }
 
-    public static int drawChatLine(VanillaChatMessage message, int yPos) {
-        String text = combineString(message);
-
-
-        UIRender.drawSquare(
-                chatPosX, chatPosY + yPos,
-                chatWidth, TextRender.getTextHeight(text, chatWidth),
-                new Color(0, 0, 0, backgroundAlpha)
-        );
-        return TextRender.drawTransferableText(
-                chatPosX + padding, chatPosY + yPos, chatWidth, text,
-                new Color(255, 255, 255, textAlpha)
-        );
-
-    }
-
-    public static int drawFadeChatLine(VanillaChatMessage message, int yPos) {
+    public static int drawChatLine(VanillaChatMessage message, int yPos, boolean fade) {
         //Степень затухания
-        float fade = 1;
-        long currentTime = System.currentTimeMillis();
-        long fading = currentTime - message.getTime() - messageTTL;
-        if (currentTime - message.getTime() >= messageTTL) fade = 1 - abs((float) fading / (float) messageFade);
-        if (fade <= 0.1) return 0;
-
+        float f = 1;
+        if(fade) {
+            long currentTime = System.currentTimeMillis();
+            long fading = currentTime - message.getTime() - messageTTL;
+            if (currentTime - message.getTime() >= messageTTL) f = 1 - abs((float) fading / (float) messageFade);
+            if (f <= 0.1) return 0;
+        }
         String text = combineString(message);
+
+        int h = TextRender.getTextHeight(text, chatWidth);
+        if(h<maxChatBlockHeight) h = maxChatBlockHeight;
         UIRender.drawSquare(
                 chatPosX, chatPosY + yPos,
-                chatWidth, TextRender.getTextHeight(text, chatWidth),
-                new Color(0, 0, 0, (int) (backgroundAlpha * (fade)))
+                chatWidth, h,
+                new Color(0, 0, 0, (int) (backgroundAlpha * f))
         );
         TextRender.drawTransferableText(
-                chatPosX + padding + avatarSize, chatPosY + yPos, chatWidth, text,
-                new Color(255, 255, 255, (int) (textAlpha * (fade)))
+                avatarSize + chatPosX + padding, chatPosY + yPos, chatWidth, text,
+                new Color(255, 255, 255, (int) (textAlpha * f))
         );
         UIRender.drawSquare(
-                chatPosX - avatarBorer,
-                chatPosY + yPos - avatarBorer,
+                chatPosX + padding,
+                chatPosY + h - (padding * 2) + yPos - avatarSize,
                 avatarSize + avatarBorer * 2,
                 avatarSize + avatarBorer * 2,
-                Color.GREEN);
-
+                new Color(255, 128,0, (int) (borderAlpha * f))); //TODO: Поменять на цвет вкладки чата
         URLImageRender.drawPlayerFace(
-                "QwertyMo",
-                chatPosX,
-                chatPosY + yPos,
+                "QwertyMo", //TODO: Сделать биндинг к автору сообщения
+                chatPosX + padding + avatarBorer,
+                chatPosY + h - (padding * 2) + yPos - avatarSize + avatarBorer,
                 avatarSize, avatarSize);
-        return TextRender.getTextHeight(text, chatWidth);
+        return h;
     }
-
 
     public static void drawInputField(String text){
         Minecraft mc = Minecraft.getMinecraft();

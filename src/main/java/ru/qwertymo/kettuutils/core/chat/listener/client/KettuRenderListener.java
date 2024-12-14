@@ -1,7 +1,6 @@
-package ru.qwertymo.kettuutils.core.chat.listener;
+package ru.qwertymo.kettuutils.core.chat.listener.client;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import ru.qwertymo.kettuutils.core.chat.view.ChatWidget;
 

@@ -1,11 +1,11 @@
 package ru.qwertymo.kettuutils.proxy;
 
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import ru.qwertymo.kettuutils.core.chat.KettuChat;
+import ru.qwertymo.kettuutils.core.chat.KettuChatClient;
 import ru.qwertymo.kettuutils.core.binding.KeyBindings;
 import ru.qwertymo.kettuutils.core.common.util.KeycodeUtil;
 
-public class KettuUtilsClientProxy extends CommonProxy {
+public class KettuUtilsClientProxy extends KettuUtilsCommonProxy {
 
     private static volatile KettuUtilsClientProxy _instance = new KettuUtilsClientProxy();
 
@@ -13,13 +13,12 @@ public class KettuUtilsClientProxy extends CommonProxy {
         return _instance;
     }
 
-    public final KettuChat chat = new KettuChat();
+    public final KettuChatClient chat = new KettuChatClient();
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         new KeyBindings();
-        new KettuChat();
         KeycodeUtil.init();
     }
 }

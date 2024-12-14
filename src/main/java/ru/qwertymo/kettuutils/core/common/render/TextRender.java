@@ -3,6 +3,7 @@ package ru.qwertymo.kettuutils.core.common.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.opengl.GL11;
+import ru.qwertymo.kettuutils.core.common.util.PosUtil;
 
 import java.awt.*;
 
@@ -17,12 +18,12 @@ public class TextRender {
 
     public static int drawText(int x, int y, String text, Color color){
         Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution sr = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        y = PosUtil.invertY(y);
         GL11.glEnable(3042);
         mc.fontRenderer.drawStringWithShadow(
                 text,
                 (x),
-                (sr.getScaledHeight() - y) - mc.fontRenderer.FONT_HEIGHT,
+                y - mc.fontRenderer.FONT_HEIGHT,
                 getIntFromColor(color)
         );
         GL11.glDisable(3008);
