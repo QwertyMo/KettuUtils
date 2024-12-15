@@ -1,6 +1,10 @@
 package ru.qwertymo.kettuutils.core.chat;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import ru.qwertymo.kettuutils.core.chat.listener.client.KettuChatListener;
 import ru.qwertymo.kettuutils.core.chat.listener.client.KettuRenderListener;
@@ -16,6 +20,7 @@ public class KettuChatClient {
     private boolean _isChatOpened = false;
 
     public KettuChatClient(){
+        Minecraft.getMinecraft().ingameGUI = new KettuIngameGui(Minecraft.getMinecraft());
         MinecraftForge.EVENT_BUS.register(new VanillaChatListener());
         FMLCommonHandler.instance().bus().register(new KettuChatListener());
         MinecraftForge.EVENT_BUS.register(new KettuRenderListener());
