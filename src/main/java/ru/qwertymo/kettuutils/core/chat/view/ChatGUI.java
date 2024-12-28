@@ -10,8 +10,6 @@ import ru.qwertymo.kettuutils.core.chat.component.ChatComponent;
 import ru.qwertymo.kettuutils.core.common.component.KettuButton;
 import ru.qwertymo.kettuutils.core.common.util.KeycodeUtil;
 import ru.qwertymo.kettuutils.core.model.VanillaChatMessage;
-import ru.qwertymo.kettuutils.core.net.NetworkManager;
-import ru.qwertymo.kettuutils.core.net.packet.ChatMessagePacket;
 import ru.qwertymo.kettuutils.proxy.KettuUtilsClientProxy;
 
 import java.awt.*;
@@ -59,7 +57,7 @@ public class ChatGUI extends GuiScreen {
             case 28:
                 this.mc.displayGuiScreen(null);
                 this.mc.setIngameFocus();
-                NetworkManager.network.sendToServer(new ChatMessagePacket(text));
+                Minecraft.getMinecraft().thePlayer.sendChatMessage(text);
             default:
                 if(KeycodeUtil.getCharKeys().contains(keyCode)) text +=c;
                 break;
