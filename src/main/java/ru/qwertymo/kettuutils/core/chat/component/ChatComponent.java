@@ -101,18 +101,18 @@ public class ChatComponent {
 
     public static void drawInputField(String text) {
         Minecraft mc = Minecraft.getMinecraft();
-        if ((System.currentTimeMillis() / 500) % 2 == 0) {
-            text += "_";
-        }
-        int height = TextRender.drawTransferableText(10, 10,inputWidth, text, new Color(255, 255, 255, (textAlpha)));
-
+        int fontHeight = mc.fontRenderer.FONT_HEIGHT + 2;
+        if ((System.currentTimeMillis() / 500) % 2 == 0) {text += "_";}
+        int height = TextRender.getTransferableTextHeight(inputWidth,text);
 
         // Рисуем фон
         UIRender.drawSquare(
                 10, 10,
-                inputWidth, height,
+                inputWidth, height == 0? fontHeight : height,
                 new Color(0, 0, 0, backgroundAlpha)
         );
+
+        TextRender.drawTransferableText(10, 10,inputWidth, text, new Color(255, 255, 255, (textAlpha)));
 
     }
 }

@@ -67,6 +67,39 @@ public class TextRender {
         return lines * lineHeight;
     }
 
+    public static int getTransferableTextHeight(int maxWidth, String text) {
+        Minecraft mc = Minecraft.getMinecraft();
+        int fontHeight = mc.fontRenderer.FONT_HEIGHT;
+        int lineHeight = fontHeight + 2; // Учитываем дополнительные отступы для шрифта
+        int currentWidth = 0;
+        ArrayList<String> lineData = new ArrayList<>();
+        StringBuilder currentLine = new StringBuilder();
+        int lines = 0;
+
+        for (char c : text.toCharArray()) {
+            int charWidth = mc.fontRenderer.getCharWidth(c) + 1; // Учитываем межсимвольное расстояние
+
+            if (currentWidth + charWidth > maxWidth) {
+                // Перенос строки
+                lineData.add(currentLine.toString());
+                currentLine = new StringBuilder();
+                currentWidth = 0;
+                lines++;
+            }
+
+            currentLine.append(c);
+            currentWidth += charWidth;
+        }
+
+        // Рисуем оставшуюся строку
+        if (currentLine.length() > 0) {
+            lineData.add(currentLine.toString());
+            lines++;
+        }
+
+        return lines * lineHeight;
+    }
+
     public static int getTextHeight(String text, int maxWidth) {
         Minecraft mc = Minecraft.getMinecraft();
         int fontHeight = mc.fontRenderer.FONT_HEIGHT;
