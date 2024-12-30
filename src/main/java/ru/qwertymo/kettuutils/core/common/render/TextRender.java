@@ -16,56 +16,70 @@ public class TextRender {
         return A | R | G | B;
     }
 
-    public static int drawText(int x, int y, String text, Color color){
+    public static int drawText(int x, int y, String text, Color color) {
         Minecraft mc = Minecraft.getMinecraft();
         y = PosUtil.invertY(y);
-        GL11.glEnable(3042);
+        GL11.glEnable(GL11.GL_BLEND);
         mc.fontRenderer.drawStringWithShadow(
                 text,
-                (x),
+                x,
                 y - mc.fontRenderer.FONT_HEIGHT,
                 getIntFromColor(color)
         );
-        GL11.glDisable(3008);
+        GL11.glDisable(GL11.GL_BLEND);
         return mc.fontRenderer.FONT_HEIGHT;
     }
 
-    public static int drawTransferableText(int x, int y, int maxWidth, String text, Color color){
+    public static int drawTransferableText(int x, int y, int maxWidth, String text, Color color) {
         Minecraft mc = Minecraft.getMinecraft();
         int fontHeight = mc.fontRenderer.FONT_HEIGHT;
+        int lineHeight = fontHeight + 2; // Учитываем дополнительные отступы для шрифта
+        int currentWidth = 0;
+        StringBuilder currentLine = new StringBuilder();
+        int lines = 0;
 
-        if(mc.fontRenderer.getStringWidth(text)>maxWidth){
-            int lines = (int) Math.ceil((double)mc.fontRenderer.getStringWidth(text)/(double)maxWidth);
-            int chars = text.length()/lines;
-            for(int i = 0; i<lines;i++){
-                drawText(
-                        x,
-                        y + (fontHeight*(lines - i - 1)),
-                        (i+1!=lines)?
-                                text.substring(chars * i,chars * (i+1)):
-                                text.substring(chars * i),
-                        color);
+        for (char c : text.toCharArray()) {
+            int charWidth = mc.fontRenderer.getCharWidth(c) + 1; // Учитываем межсимвольное расстояние
+
+            if (currentWidth + charWidth > maxWidth) {
+                // Перенос строки
+                drawText(x, y + (lines * lineHeight), currentLine.toString(), color);
+                currentLine = new StringBuilder();
+                currentWidth = 0;
+                lines++;
             }
-            return fontHeight * lines;
-        }else return drawText(x,y,text,color);
 
+            currentLine.append(c);
+            currentWidth += charWidth;
+        }
+
+        // Рисуем оставшуюся строку
+        if (currentLine.length() > 0) {
+            drawText(x, y + (lines * lineHeight), currentLine.toString(), color);
+            lines++;
+        }
+
+        return lines * lineHeight;
     }
 
-    public static int getTextHeight(String text, int maxWidth){
+    public static int getTextHeight(String text, int maxWidth) {
         Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution sr = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-        float scale = (float) sr.getScaledHeight() / mc.displayHeight;
-        return (int) Math.ceil(
-                (double)mc.fontRenderer.getStringWidth(text)/(double)(maxWidth*scale)
-        ) * mc.fontRenderer.FONT_HEIGHT;
-    }
+        int fontHeight = mc.fontRenderer.FONT_HEIGHT;
+        int lineHeight = fontHeight + 2; // Учитываем дополнительные отступы
+        int currentWidth = 0;
+        int lines = 1;
 
-    public static int drawTransferableText(int x, int y, int maxWidth, String text){
-        return drawTransferableText(x,y,maxWidth,text,Color.WHITE);
+        for (char c : text.toCharArray()) {
+            int charWidth = mc.fontRenderer.getCharWidth(c) + 1;
 
-    }
+            if (currentWidth + charWidth > maxWidth) {
+                currentWidth = 0;
+                lines++;
+            }
 
-    public static int drawText(int x, int y, String text){
-        return drawText(x, y, text, Color.WHITE);
+            currentWidth += charWidth;
+        }
+
+        return lines * lineHeight;
     }
 }

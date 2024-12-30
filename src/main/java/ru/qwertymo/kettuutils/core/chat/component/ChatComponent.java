@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
 
 public class ChatComponent {
 
@@ -24,7 +25,7 @@ public class ChatComponent {
     private final static int backgroundAlpha = 96;
     private final static int borderAlpha = 192;
 
-    private final static int inputWidth = 350;
+    private final static int inputWidth = 300;
     private final static int avatarSize = 16;
     private final static int avatarBorer = 1;
 
@@ -45,52 +46,94 @@ public class ChatComponent {
     }
 
     public static int drawChatLine(VanillaChatMessage message, int yPos, boolean fade) {
-        //Степень затухания
-        float f = 1;
-        if(fade) {
+        float f = 1.0f;
+        if (fade) {
             long currentTime = System.currentTimeMillis();
             long fading = currentTime - message.getTime() - messageTTL;
-            if (currentTime - message.getTime() >= messageTTL) f = 1 - abs((float) fading / (float) messageFade);
+            if (currentTime - message.getTime() >= messageTTL) {
+                f = 1 - Math.abs((float) fading / (float) messageFade);
+            }
             if (f <= 0.1) return 0;
         }
-        String text = combineString(message);
 
-        int h = TextRender.getTextHeight(text, chatWidth);
-        if(h<maxChatBlockHeight) h = maxChatBlockHeight;
+        String text = combineString(message);
+        int textHeight = TextRender.getTextHeight(text, chatWidth);
+        int blockHeight = Math.max(textHeight, maxChatBlockHeight);
+
         UIRender.drawSquare(
                 chatPosX, chatPosY + yPos,
-                chatWidth, h,
+                chatWidth, blockHeight,
                 new Color(0, 0, 0, (int) (backgroundAlpha * f))
         );
+
         TextRender.drawTransferableText(
-                avatarSize + chatPosX + padding, chatPosY + yPos, chatWidth, text,
+                avatarSize + chatPosX + padding,
+                chatPosY + yPos,
+                chatWidth,
+                text,
                 new Color(255, 255, 255, (int) (textAlpha * f))
         );
+
         UIRender.drawSquare(
                 chatPosX + padding,
-                chatPosY + h - (padding * 2) + yPos - avatarSize,
+                chatPosY + blockHeight - avatarSize - padding * 2 + yPos,
                 avatarSize + avatarBorer * 2,
                 avatarSize + avatarBorer * 2,
-                new Color(255, 128,0, (int) (borderAlpha * f))); //TODO: Поменять на цвет вкладки чата
+                new Color(255, 128, 0, (int) (borderAlpha * f))
+        );
+
         URLImageRender.drawPlayerFace(
-                "QwertyMo", //TODO: Сделать биндинг к автору сообщения
+                "QwertyMo",
                 chatPosX + padding + avatarBorer,
-                chatPosY + h - (padding * 2) + yPos - avatarSize + avatarBorer,
-                avatarSize, avatarSize);
-        return h;
+                chatPosY + blockHeight - avatarSize - padding * 2 + yPos + avatarBorer,
+                avatarSize, avatarSize
+        );
+
+        return blockHeight;
     }
 
-    public static void drawInputField(String text){
+    public static int calculateInputFieldHeight(String text, int maxWidth) {
+        int textHeight = TextRender.getTextHeight(text, maxWidth);
+        return textHeight + padding * 2; // Учитываем отступы
+    }
+
+
+    public static void drawInputField(String text) {
         Minecraft mc = Minecraft.getMinecraft();
+        int amountLines = 1; // изначальное кол-во строк
+        int maxWidth = (inputWidth * amountLines) - padding * 2; // Максимальная ширина текста
+        StringBuilder visibleText = new StringBuilder();
+        int currentWidth = 0;
+
+        // Учитываем ширину текста, чтобы не выходить за пределы поля
+        for (char c : text.toCharArray()) {
+            int charWidth = mc.fontRenderer.getCharWidth(c);
+
+            if (currentWidth + charWidth > maxWidth) {
+                // Добавляем вывод в консоль
+                System.out.println("Текст достиг конца строки, продолжаем перенос текста.");
+
+                break; // Прекращаем добавление текста, если он выходит за пределы поля
+            }
+
+            visibleText.append(c);
+            currentWidth += charWidth;
+        }
+
+        // Добавляем мигающий курсор
+        if ((System.currentTimeMillis() / 500) % 2 == 0) {
+            visibleText.append("_");
+        }
+
+        // Рисуем фон
         UIRender.drawSquare(
                 10, 10,
                 inputWidth, mc.fontRenderer.FONT_HEIGHT + 4,
-                new Color(0, 0, 0, (backgroundAlpha))
+                new Color(0, 0, 0, backgroundAlpha)
         );
-        TextRender.drawTransferableText(
-                10 + padding, 12, chatWidth, text + (((System.currentTimeMillis() / 500)%2==0) ? "":"_"),
-                new Color(255, 255, 255, (textAlpha))
-        );
+
+        // Рисуем текст
+        TextRender.drawText(10 + padding, 12, visibleText.toString(), new Color(255, 255, 255, textAlpha));
     }
 
 }
