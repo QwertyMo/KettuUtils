@@ -101,56 +101,18 @@ public class ChatComponent {
 
     public static void drawInputField(String text) {
         Minecraft mc = Minecraft.getMinecraft();
-        int amountLines = 1; // Изначальное количество строк
-        int amountJumps = 1; // Изначальное смещение основного чата
-        int maxWidth = inputWidth - padding * 2; // Максимальная ширина текста для одной строки
-        StringBuilder visibleText = new StringBuilder();
-        int currentWidth = 0;
-
-        // Учитываем ширину текста и добавляем строки при необходимости
-        for (char c : text.toCharArray()) {
-            int charWidth = mc.fontRenderer.getCharWidth(c);
-
-            if (currentWidth + charWidth > maxWidth) {
-                // Добавляем вывод в консоль и увеличиваем количество строк
-                System.out.println("Текст достиг конца строки, продолжаем перенос текста.");
-
-                // Увеличиваем количество строк
-                amountLines++;
-                maxWidth = (inputWidth * amountLines) - padding * 2; // Расширяем ширину для новых строк
-
-                // Добавляем символ в новую строку
-                visibleText.append("\n");
-                currentWidth = 0; // Сбрасываем текущую ширину для новой строки
-            }
-
-            visibleText.append(c);
-            currentWidth += charWidth;
-        }
-
-        // Добавляем мигающий курсор
         if ((System.currentTimeMillis() / 500) % 2 == 0) {
-            visibleText.append("_");
+            text += "_";
         }
+        int height = TextRender.drawTransferableText(10, 10,inputWidth, text, new Color(255, 255, 255, (textAlpha)));
 
-        // Рассчитываем итоговую высоту ввода с учетом новых строк
-        int inputHeight = (mc.fontRenderer.FONT_HEIGHT + 4) * amountLines + padding * 2;
 
         // Рисуем фон
         UIRender.drawSquare(
                 10, 10,
-                inputWidth, inputHeight,
+                inputWidth, height,
                 new Color(0, 0, 0, backgroundAlpha)
         );
 
-        // Рисуем текст
-        TextRender.drawText(10 + padding, 12, visibleText.toString(), new Color(255, 255, 255, textAlpha));
-
-        // Перемещение основного чата вниз при достижении конца строки
-        if (amountLines > 1 && amountJumps != amountLines) {
-            amountJumps++;
-            int offsetY = (amountLines - 1) * (mc.fontRenderer.FONT_HEIGHT + 4);  // Считаем, сколько строк было добавлено
-            chatPosY2 += offsetY;  // Сдвигаем чат вниз
-        }
     }
 }
