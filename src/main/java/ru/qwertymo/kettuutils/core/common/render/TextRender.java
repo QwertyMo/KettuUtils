@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import ru.qwertymo.kettuutils.core.common.util.PosUtil;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class TextRender {
     public static int getIntFromColor(Color color) {
@@ -35,6 +36,7 @@ public class TextRender {
         int fontHeight = mc.fontRenderer.FONT_HEIGHT;
         int lineHeight = fontHeight + 2; // Учитываем дополнительные отступы для шрифта
         int currentWidth = 0;
+        ArrayList<String> lineData = new ArrayList<>();
         StringBuilder currentLine = new StringBuilder();
         int lines = 0;
 
@@ -43,7 +45,7 @@ public class TextRender {
 
             if (currentWidth + charWidth > maxWidth) {
                 // Перенос строки
-                drawText(x, y + (lines * lineHeight), currentLine.toString(), color);
+                lineData.add(currentLine.toString());
                 currentLine = new StringBuilder();
                 currentWidth = 0;
                 lines++;
@@ -55,8 +57,11 @@ public class TextRender {
 
         // Рисуем оставшуюся строку
         if (currentLine.length() > 0) {
-            drawText(x, y + (lines * lineHeight), currentLine.toString(), color);
+            lineData.add(currentLine.toString());
             lines++;
+        }
+        for(int i = 0; i<lineData.size();i++){
+            drawText(x, y + ((lineData.size() - i - 1) * lineHeight)  , lineData.get(i), color);
         }
 
         return lines * lineHeight;
